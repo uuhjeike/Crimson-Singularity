@@ -200,7 +200,6 @@ function tokenize(text) {
 
 function renderPost(text, i) {
   const art = el('article', 'post');
-  art.appendChild(el('div', 'rec', 'RECORD // ' + String(i + 1).padStart(3, '0')));
   let gallery = null;
   for (const tk of tokenize(text)) {
     if (tk.t === 'text') {
@@ -240,14 +239,15 @@ async function init() {
   $('lbc').addEventListener('click', () => $('lb').close());
   $('lb').addEventListener('click', e => { if (e.target === $('lb')) $('lb').close(); });
 
-  const list = $('posts'), count = $('count'), more = $('more');
+  const list = $('posts'), more = $('more');
+  const setMeter = (n, label) => { $('num').textContent = n; $('numlbl').textContent = label; };
   let posts;
   try {
     const r = await fetch('posts.txt', { cache: 'no-cache' });
     if (!r.ok) throw new Error('HTTP ' + r.status);
     posts = parsePosts(await r.text());
   } catch (e) {
-    count.textContent = 'ARCHIVE // UNAVAILABLE';
+    setMeter('\u2014', 'ARCHIVE UNAVAILABLE');
     list.appendChild(notice('The archive could not be loaded',
       location.protocol === 'file:'
         ? 'Browsers block reading posts.txt from a file:// page. Open the site through GitHub Pages or a local web server.'
@@ -255,12 +255,12 @@ async function init() {
     return;
   }
   if (!posts.length) {
-    count.textContent = 'ARCHIVE // 000 POSTS';
+    setMeter('0', 'POSTS ADDED');
     list.appendChild(notice('The archive is empty',
       'posts.txt has no valid posts. Put a line containing only $ before and after each post.'));
     return;
   }
-  count.textContent = 'ARCHIVE // ' + String(posts.length).padStart(3, '0') + ' POSTS';
+  setMeter(String(posts.length), posts.length === 1 ? 'POST ADDED' : 'POSTS ADDED');
 
   let n = 0, io = null;
   const BATCH = 8;
@@ -269,7 +269,7 @@ async function init() {
     const frag = document.createDocumentFragment();
     for (const end = Math.min(n + BATCH, posts.length); n < end; n++) {
       try { frag.appendChild(renderPost(posts[n], n)); }
-      catch (e) { frag.appendChild(notice('Record ' + (n + 1), 'This post could not be displayed.')); }
+      catch (e) { frag.appendChild(notice('Post unavailable', 'This post could not be displayed.')); }
     }
     list.appendChild(frag);
     if (n >= posts.length) { more.hidden = true; if (io) io.disconnect(); }
