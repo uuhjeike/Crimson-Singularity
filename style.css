@@ -17,16 +17,19 @@ h1{margin:22px 0 0;color:var(--white);font-weight:400;font-size:clamp(26px,7.6vw
 .socials:empty{display:none}
 .socials a{display:block;padding:6px 14px;border:1px solid var(--line);background:var(--bg2);text-decoration:none;font:12px system-ui,sans-serif;letter-spacing:.12em}
 .socials a:hover{border-color:var(--red)}
-.divider{position:relative;height:110px;margin:18px 0 6px;background:linear-gradient(90deg,transparent,var(--silver) 22%,var(--white) 50%,var(--silver) 78%,transparent) center/100% 2px no-repeat}
-.divider::before{content:"";position:absolute;left:50%;top:50%;width:min(280px,72vw);height:56px;margin:-28px 0 0 calc(min(280px,72vw)/-2);border:2px solid var(--silver);border-radius:50%;transform:rotate(-8deg);box-shadow:0 0 18px rgba(255,32,42,.4)}
-.divider::after{content:"";position:absolute;left:50%;top:0;bottom:0;width:3px;margin-left:-1.5px;background:linear-gradient(transparent,var(--red) 30%,var(--red) 70%,transparent);box-shadow:0 0 14px var(--red)}
+.divider{margin:14px 0 4px;text-align:center}
+.divider svg{display:block;width:100%;max-width:620px;height:auto;margin:0 auto}
+.dtext{margin:2px 0 18px;color:var(--silver);font:12px system-ui,sans-serif;letter-spacing:.5em;text-indent:.5em}
 .meter{text-align:center;margin:0 0 26px}
 #num{display:block;color:var(--white);font:400 clamp(48px,15vw,76px)/1 Georgia,serif;letter-spacing:.06em;text-shadow:0 0 24px rgba(255,32,42,.55)}
 #numlbl{display:block;margin-top:8px;color:var(--red);font-size:12px}
 .post{background:var(--card);border:1px solid var(--line);border-left:2px solid var(--deep);border-radius:3px;padding:18px;margin:0 0 18px;min-width:0}
 .txt{white-space:pre-wrap;overflow-wrap:anywhere;word-break:break-word;margin:0 0 14px;color:var(--white)}
 .post>:last-child{margin-bottom:0}
-.gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));gap:8px;align-items:start;margin:0 0 14px}
+.gallery{display:grid;grid-template-columns:repeat(var(--c,3),minmax(0,1fr));gap:6px;align-items:start;margin:0 0 14px}
+.gallery[data-n="1"]{--c:1}
+.gallery[data-n="2"]{--c:2}
+.gallery .fail{margin:0;padding:8px;font-size:12px}
 .thumb{display:block;width:100%;padding:0;border:1px solid var(--line);background:var(--bg2);cursor:zoom-in}
 .thumb img{display:block;width:100%;height:auto;max-height:80vh;object-fit:contain}
 .media{margin:0 0 14px}

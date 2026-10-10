@@ -214,6 +214,7 @@ function renderPost(text, i) {
       gallery.appendChild(r.n);
     } else { gallery = null; art.appendChild(r.n); }
   }
+  art.querySelectorAll('.gallery').forEach(g => { g.dataset.n = Math.min(g.children.length, 3); });
   return art;
 }
 

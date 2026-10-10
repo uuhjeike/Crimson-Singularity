@@ -18,7 +18,29 @@
     <p id="bio" class="bio"></p>
     <ul id="socials" class="socials"></ul>
   </header>
-  <div class="divider" role="separator"></div>
+  <div class="divider" role="separator" aria-hidden="true">
+    <svg viewBox="0 0 600 150" preserveAspectRatio="xMidYMid meet" focusable="false">
+      <defs>
+        <linearGradient id="ln" x1="0" x2="1"><stop offset="0" stop-color="#030303"/><stop offset=".25" stop-color="#85858B"/><stop offset=".5" stop-color="#F4F4F4"/><stop offset=".75" stop-color="#85858B"/><stop offset="1" stop-color="#030303"/></linearGradient>
+        <linearGradient id="bm" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FF202A" stop-opacity="0"/><stop offset=".35" stop-color="#FF202A"/><stop offset=".65" stop-color="#FF202A"/><stop offset="1" stop-color="#FF202A" stop-opacity="0"/></linearGradient>
+        <filter id="gl" x="-200%" y="-20%" width="500%" height="140%"><feGaussianBlur stdDeviation="4"/></filter>
+      </defs>
+      <rect x="0" y="74" width="600" height="2" fill="url(#ln)"/>
+      <g transform="rotate(-8 300 75)" fill="none">
+        <path d="M95 75A205 30 0 0 1 505 75" stroke="#C7C9CE" stroke-width="2" opacity=".45"/>
+        <path d="M150 75A150 20 0 0 1 450 75" stroke="#8B000B" stroke-width="2" opacity=".8"/>
+      </g>
+      <rect x="297" y="0" width="6" height="150" fill="url(#bm)" filter="url(#gl)"/>
+      <rect x="299" y="0" width="2" height="150" fill="url(#bm)"/>
+      <g transform="rotate(-8 300 75)" fill="none">
+        <path d="M150 75A150 20 0 0 0 450 75" stroke="#FF202A" stroke-width="2"/>
+        <path d="M95 75A205 30 0 0 0 505 75" stroke="#C7C9CE" stroke-width="3"/>
+      </g>
+      <circle cx="300" cy="75" r="9" fill="#FF202A" filter="url(#gl)"/>
+      <circle cx="300" cy="75" r="3.5" fill="#F4F4F4"/>
+    </svg>
+    <p class="dtext">THE ARCHIVE</p>
+  </div>
   <section aria-labelledby="numlbl">
     <div class="meter" role="status"><span id="num">&mdash;</span><span id="numlbl">POSTS LOADING</span></div>
     <div id="posts"></div>
