@@ -1,4 +1,6 @@
 $
+https://docs.google.com/document/d/1M7CTUK7srwUWaSdp8lRNVXxwVI_i5c6b-D8wzltxCnw/edit?usp=drivesdk
+$
 Alpha, since you want to back up your approximately 5 TB of personal files, family photos, videos, music, games, and other important data, and you don't want cloud storage or a subscription, there's one important distinction to make.
 
 If you mean 10 companies that will store your data for free on their own physical drives, there aren't 10 reputable companies I can recommend that offer unlimited, free offline storage. However, there are excellent companies offering free backup software that lets you store your files on your own HDDs without paying for cloud storage.
