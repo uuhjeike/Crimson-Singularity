@@ -103,6 +103,10 @@ function imageNode(src, orig, name) {
   img.alt = name;
   img.src = src;
   img.addEventListener('error', () => b.replaceWith(fail('This image', orig)), { once: true });
+  img.addEventListener('load', () => {
+    b.classList.add('ld');
+    if (img.naturalWidth && img.naturalHeight) b.style.flexGrow = img.naturalWidth / img.naturalHeight;
+  }, { once: true });
   b.appendChild(img);
   b.addEventListener('click', () => {
     $('lbi').src = img.currentSrc || src;
@@ -204,17 +208,22 @@ function renderPost(text, i) {
   for (const tk of tokenize(text)) {
     if (tk.t === 'text') {
       const s = tk.v.trim();
-      if (s) { gallery = null; art.appendChild(el('p', 'txt', s)); }
+      if (s) { gallery = null; const p = el('p', 'txt', s); p._full = s; art.appendChild(p); }
       continue;
     }
     let r;
     try { r = renderUrl(tk.v); } catch (e) { r = { n: el('p', 'txt', tk.v) }; }
     if (r.img) {
       if (!gallery) { gallery = el('div', 'gallery'); art.appendChild(gallery); }
-      gallery.appendChild(r.n);
+      let row = gallery.lastElementChild;
+      if (!row || row.children.length >= 3) { row = el('div', 'grow'); gallery.appendChild(row); }
+      row.appendChild(r.n);
     } else { gallery = null; art.appendChild(r.n); }
   }
-  art.querySelectorAll('.gallery').forEach(g => { g.dataset.n = Math.min(g.children.length, 3); });
+  art.querySelectorAll('.gallery').forEach(g => {
+    const last = g.lastElementChild;
+    if (g.querySelectorAll('.thumb').length > 1 && last.children.length < 3) last.style.width = (last.children.length * 100 / 3) + '%';
+  });
   return art;
 }
 
@@ -223,6 +232,23 @@ function notice(title, msg) {
   d.appendChild(el('h3', null, title));
   d.appendChild(el('p', null, msg));
   return d;
+}
+
+/* ---------- long text: show 5 lines, then "... Read more" ---------- */
+function fit(p) {
+  if (p.dataset.open || !p._full) return;
+  const full = p._full;
+  p.textContent = full;
+  const lh = parseFloat(getComputedStyle(p).lineHeight) || 28, max = lh * 5 + 2;
+  if (!p.clientWidth || p.scrollHeight <= max) return;
+  const btn = el('button', 'more', 'Read more');
+  btn.type = 'button';
+  btn.addEventListener('click', () => { p.dataset.open = '1'; p.textContent = full; });
+  const set = k => { p.textContent = full.slice(0, k).replace(/\s+$/, '') + '\u2026 '; p.appendChild(btn); };
+  let lo = 0, hi = full.length;
+  while (lo < hi) { const mid = (lo + hi + 1) >> 1; set(mid); if (p.scrollHeight <= max) lo = mid; else hi = mid - 1; }
+  const cut = full.slice(0, lo).replace(/\s+\S*$/, '');
+  set(cut.length && lo - cut.length < 24 ? cut.length : lo);
 }
 
 /* ---------- init ---------- */
@@ -240,7 +266,7 @@ async function init() {
   $('lbc').addEventListener('click', () => $('lb').close());
   $('lb').addEventListener('click', e => { if (e.target === $('lb')) $('lb').close(); });
 
-  const list = $('posts'), more = $('more');
+  const list = $('posts');
   const setMeter = (n, label) => { $('num').textContent = n; $('numlbl').textContent = label; };
   let posts;
   try {
@@ -264,7 +290,7 @@ async function init() {
   setMeter(String(posts.length), posts.length === 1 ? 'POST ADDED' : 'POSTS ADDED');
 
   let n = 0, io = null;
-  const BATCH = 8;
+  const BATCH = 8, sentinel = $('end');
   const next = () => {
     if (n >= posts.length) return;
     const frag = document.createDocumentFragment();
@@ -272,15 +298,21 @@ async function init() {
       try { frag.appendChild(renderPost(posts[n], n)); }
       catch (e) { frag.appendChild(notice('Post unavailable', 'This post could not be displayed.')); }
     }
+    const fresh = [...frag.querySelectorAll('.txt')];
     list.appendChild(frag);
-    if (n >= posts.length) { more.hidden = true; if (io) io.disconnect(); }
+    fresh.forEach(fit);
+    if (n >= posts.length) { if (io) io.disconnect(); }
+    else if (io) { io.unobserve(sentinel); io.observe(sentinel); }
   };
-  more.hidden = false;
-  more.addEventListener('click', next);
   if ('IntersectionObserver' in window) {
-    io = new IntersectionObserver(es => { if (es[0].isIntersecting) next(); }, { rootMargin: '600px' });
-    io.observe(more);
-  }
-  next();
+    io = new IntersectionObserver(es => { if (es.some(e => e.isIntersecting)) next(); }, { rootMargin: '800px' });
+    io.observe(sentinel);
+  } else { while (n < posts.length) next(); }
+  let lastW = innerWidth;
+  addEventListener('resize', () => {
+    if (innerWidth === lastW) return;
+    lastW = innerWidth;
+    requestAnimationFrame(() => document.querySelectorAll('.txt').forEach(fit));
+  });
 }
 init();
